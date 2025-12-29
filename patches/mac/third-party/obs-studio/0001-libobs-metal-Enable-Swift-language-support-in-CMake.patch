@@ -1,0 +1,27 @@
+From cf3aa610fedb1d3a528699204cf4bed4bbb5adaa Mon Sep 17 00:00:00 2001
+From: Xaymar <info@xaymar.com>
+Date: Fri, 3 Oct 2025 00:31:19 +0200
+Subject: [PATCH] libobs-metal: Enable Swift language support in CMake
+
+We need to explicitly enable Swift language support if ENABLE_PLUGINS
+is set to OFF.
+---
+ libobs-metal/CMakeLists.txt | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/libobs-metal/CMakeLists.txt b/libobs-metal/CMakeLists.txt
+index e9afd5f10..6ca5e4020 100644
+--- a/libobs-metal/CMakeLists.txt
++++ b/libobs-metal/CMakeLists.txt
+@@ -1,5 +1,8 @@
+ cmake_minimum_required(VERSION 3.28...3.30)
+ 
++# Enable support for the Swift language.
++enable_language(Swift)
++
+ add_library(libobs-metal SHARED)
+ add_library(OBS::libobs-metal ALIAS libobs-metal)
+ 
+-- 
+2.48.1.windows.1
+
