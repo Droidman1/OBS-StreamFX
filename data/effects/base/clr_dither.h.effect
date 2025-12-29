@@ -1,0 +1,132 @@
+// Copyright 2021 Michael Fabian Dirks <info@xaymar.com>
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright notice,
+//    this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright notice,
+//    this list of conditions and the following disclaimer in the documentation
+//    and/or other materials provided with the distribution.
+// 3. Neither the name of the copyright holder nor the names of its contributors
+//    may be used to endorse or promote products derived from this software
+//    without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
+/**
+ * @param xy The absolute XY coordinate in the unnormalized coordinate space.
+ * @param steps The maximum detail level that should be achieved.
+ */
+float dither_bayer_matrix(float2 xy, float steps) {
+	float finalBayer   = 0.0;
+	float finalDivisor = 0.0;
+    float layerMult	   = 1.0;
+
+  	for(float bayerLevel = steps; bayerLevel >= 1.0; bayerLevel--)
+	{
+		layerMult 		   *= 4.0;
+
+		float2 bayercoord 	= floor(vpos.xy * exp2(1 - bayerLevel)) % 2;
+		float line0202 = bayercoord.x*2.0;
+
+		finalBayer += lerp(line0202, 3.0 - line0202, bayercoord.y) / 3.0 * layerMult;
+		finalDivisor += layerMult;
+	}
+
+	return finalBayer / finalDivisor;
+}
+
+float dither_bayer1(float v, float2 xy, float range, float steps) {
+    // - Retrieve the "step".
+    float d = dither_bayer_matrix(xy, steps);
+
+    // - Scale to a pseudo-integer
+    float vRange = v * range;
+    
+    // - Grab the fraction which tells us how close we are to the higher value.
+    float vFract = fract(vRange);
+    
+    // - Calculate the "step" for the given pixel 
+    float vStep = floor(vRange);
+    vStep += 1. - step(-d, -vFract);
+    
+    // - Scale back down to a float.
+    float vFinal = vStep / range;
+
+    // Return result.
+    return vFinal;
+}
+
+float2 dither_bayer2(float2 v, float2 xy, float range, float steps) {
+    // - Retrieve the "step".
+    float d = dither_bayer_matrix(xy, steps);
+
+    // - Scale to a pseudo-integer
+    float2 vRange = v * range;
+    
+    // - Grab the fraction which tells us how close we are to the higher value.
+    float2 vFract = fract(vRange);
+    
+    // - Calculate the "step" for the given pixel 
+    float2 vStep = floor(vRange);
+    vStep += 1. - step(-d, -vFract);
+    
+    // - Scale back down to a float.
+    float2 vFinal = vStep / range;
+
+    // Return result.
+    return vFinal;
+}
+
+float3 dither_bayer3(float3 v, float2 xy, float range, float steps) {
+    // - Retrieve the "step".
+    float d = dither_bayer_matrix(xy, steps);
+
+    // - Scale to a pseudo-integer
+    float3 vRange = v * range;
+    
+    // - Grab the fraction which tells us how close we are to the higher value.
+    float3 vFract = fract(vRange);
+    
+    // - Calculate the "step" for the given pixel 
+    float3 vStep = floor(vRange);
+    vStep += 1. - step(-d, -vFract);
+    
+    // - Scale back down to a float.
+    float3 vFinal = vStep / range;
+
+    // Return result.
+    return vFinal;
+}
+
+float4 dither_bayer4(float4 v, float2 xy, float range, float steps) {
+    // - Retrieve the "step".
+    float d = dither_bayer_matrix(xy, steps);
+
+    // - Scale to a pseudo-integer
+    float4 vRange = v * range;
+    
+    // - Grab the fraction which tells us how close we are to the higher value.
+    float4 vFract = fract(vRange);
+    
+    // - Calculate the "step" for the given pixel 
+    float4 vStep = floor(vRange);
+    vStep += 1. - step(-d, -vFract);
+    
+    // - Scale back down to a float.
+    float4 vFinal = vStep / range;
+
+    // Return result.
+    return vFinal;
+}

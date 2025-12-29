@@ -1,0 +1,111 @@
+// Copyright 2021 Michael Fabian Dirks <info@xaymar.com>
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright notice,
+//    this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright notice,
+//    this list of conditions and the following disclaimer in the documentation
+//    and/or other materials provided with the distribution.
+// 3. Neither the name of the copyright holder nor the names of its contributors
+//    may be used to endorse or promote products derived from this software
+//    without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
+float wrap(float value, float low, float high) {
+	float d = high - low;
+	float t = value - low;
+	float m = t / d;
+	return value - (d * floor(m));
+}
+
+float2 wrap2(float2 value, float2 low, float2 high) {
+	float2 d = high - low;
+	float2 t = value - low;
+	float2 m = t / d;
+	return value - (d * floor(m));
+}
+
+float3 wrap3(float3 value, float3 low, float3 high) {
+	float3 d = high - low;
+	float3 t = value - low;
+	float3 m = t / d;
+	return value - (d * floor(m));
+}
+
+float4 wrap4(float4 value, float4 low, float4 high) {
+	float4 d = high - low;
+	float4 t = value - low;
+	float4 m = t / d;
+	return value - (d * floor(m));
+}
+
+float wrap_remainder(float value, float low, float high, out float remainder) {
+	float d = high - low;
+	float t = value - low;
+	float m = t / d;
+	remainder = floor(m);
+	return value - (d * remainder);
+}
+float2 wrap2_remainder(float2 value, float low, float high, out float2 remainder) {
+	float d = high - low;
+	float2 t = value - low;
+	float2 m = t / d;
+	remainder = floor(m);
+	return value - (d * remainder);
+}
+float3 wrap3_remainder(float3 value, float low, float high, out float3 remainder) {
+	float d = high - low;
+	float3 t = value - low;
+	float3 m = t / d;
+	remainder = floor(m);
+	return value - (d * remainder);
+}
+float4 wrap4_remainder(float4 value, float low, float high, out float4 remainder) {
+	float d = high - low;
+	float4 t = value - low;
+	float4 m = t / d;
+	remainder = floor(m);
+	return value - (d * remainder);
+}
+
+// Remap a value from [from_min]..[from_max] to [to_min]..[to_max].
+float remap(float v, float from_min, float from_max, float to_min, float to_max) {
+	return to_min + ((v - from_min) / (from_max - from_min)) * (to_max - to_min);
+}
+
+float2 remap2(float2 v, float2 from_min, float2 from_max, float2 to_min, float2 to_max) {
+	return float2(
+		remap(v.x, from_min.x, from_max.x, to_min.x, to_max.x),
+		remap(v.y, from_min.y, from_max.y, to_min.y, to_max.y),
+	);
+}
+
+float3 remap3(float3 v, float3 from_min, float3 from_max, float3 to_min, float3 to_max) {
+	return float3(
+		remap(v.x, from_min.x, from_max.x, to_min.x, to_max.x),
+		remap(v.y, from_min.y, from_max.y, to_min.y, to_max.y),
+		remap(v.z, from_min.z, from_max.z, to_min.z, to_max.z),
+	);
+}
+
+float4 remap4(float4 v, float4 from_min, float4 from_max, float4 to_min, float4 to_max) {
+	return float4(
+		remap(v.x, from_min.x, from_max.x, to_min.x, to_max.x),
+		remap(v.y, from_min.y, from_max.y, to_min.y, to_max.y),
+		remap(v.z, from_min.z, from_max.z, to_min.z, to_max.z),
+		remap(v.w, from_min.w, from_max.w, to_min.w, to_max.w),
+	);
+}

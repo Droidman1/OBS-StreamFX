@@ -1,0 +1,138 @@
+// Copyright 2021 Michael Fabian Dirks <info@xaymar.com>
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright notice,
+//    this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright notice,
+//    this list of conditions and the following disclaimer in the documentation
+//    and/or other materials provided with the distribution.
+// 3. Neither the name of the copyright holder nor the names of its contributors
+//    may be used to endorse or promote products derived from this software
+//    without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
+//------------------------------------------------------------------------------
+// Triangle
+//------------------------------------------------------------------------------
+float lerp_tri1(float a, float b, float c, float t) {
+	float tab = t * 2.;
+	float tbc = clamp(tab - 1, 0., 1.);
+	tab = clamp(tab, 0., 1.);
+	return lerp(lerp(a, b, tab), c, tbc);
+}
+float2 lerp_tri2(float2 a, float2 b, float2 c, float t) {
+	float tab = t * 2.;
+	float tbc = clamp(tab - 1, 0., 1.);
+	tab = clamp(tab, 0., 1.);
+	return lerp(lerp(a, b, tab), c, tbc);
+}
+float3 lerp_tri3(float3 a, float3 b, float3 c, float t) {
+	float tab = t * 2.;
+	float tbc = clamp(tab - 1, 0., 1.);
+	tab = clamp(tab, 0., 1.);
+	return lerp(lerp(a, b, tab), c, tbc);
+}
+float4 lerp_tri4(float4 a, float4 b, float4 c, float t) {
+	float tab = t * 2.;
+	float tbc = clamp(tab - 1, 0., 1.);
+	tab = clamp(tab, 0., 1.);
+	return lerp(lerp(a, b, tab), c, tbc);
+}
+
+//------------------------------------------------------------------------------
+// Cubic (Hermite)
+//------------------------------------------------------------------------------
+float lerp_cubic_hermite(float A, float B, float C, float D, float t) {
+	float a = -A / 2.0f + (3.0f*B) / 2.0f - (3.0f*C) / 2.0f + D / 2.0f;
+	float b = A - (5.0f*B) / 2.0f + 2.0f*C - D / 2.0f;
+	float c = -A / 2.0f + C / 2.0f;
+	float d = B;
+	float t2 = t * t;
+
+	return a*t*t2 + b*t2 + c*t + d;
+}
+float2 lerp2_cubic_hermite(float2 A, float2 B, float2 C, float2 D, float t) {
+	float2 a = -A / 2.0f + (3.0f*B) / 2.0f - (3.0f*C) / 2.0f + D / 2.0f;
+	float2 b = A - (5.0f*B) / 2.0f + 2.0f*C - D / 2.0f;
+	float2 c = -A / 2.0f + C / 2.0f;
+	float2 d = B;
+	float t2 = t * t;
+
+	return a*t*t2 + b*t2 + c*t + d;
+}
+float3 lerp3_cubic_hermite(float3 A, float3 B, float3 C, float3 D, float t) {
+	float3 a = -A / 2.0f + (3.0f*B) / 2.0f - (3.0f*C) / 2.0f + D / 2.0f;
+	float3 b = A - (5.0f*B) / 2.0f + 2.0f*C - D / 2.0f;
+	float3 c = -A / 2.0f + C / 2.0f;
+	float3 d = B;
+	float t2 = t * t;
+
+	return a*t*t2 + b*t2 + c*t + d;
+}
+float4 lerp4_cubic_hermite(float4 A, float4 B, float4 C, float4 D, float t) {
+	float4 a = -A / 2.0f + (3.0f*B) / 2.0f - (3.0f*C) / 2.0f + D / 2.0f;
+	float4 b = A - (5.0f*B) / 2.0f + 2.0f*C - D / 2.0f;
+	float4 c = -A / 2.0f + C / 2.0f;
+	float4 d = B;
+	float t2 = t * t;
+
+	return a*t*t2 + b*t2 + c*t + d;
+}
+
+float lerp_bicubic_hermite(float2 blend,
+	float v00, float v10, float v20, float v30,
+	float v01, float v11, float v21, float v31,
+	float v02, float v12, float v22, float v32,
+	float v03, float v13, float v23, float v33) {
+	float r0 = lerp_cubic_hermite(v00, v10, v20, v30, blend.x);
+	float r1 = lerp_cubic_hermite(v01, v11, v21, v31, blend.x);
+	float r2 = lerp_cubic_hermite(v02, v12, v22, v32, blend.x);
+	float r3 = lerp_cubic_hermite(v03, v13, v23, v33, blend.x);
+	return lerp_cubic_hermite(r0, r1, r2, r3, blend.y);
+}
+float2 lerp2_bicubic_hermite(float2 blend,
+	float2 v00, float2 v10, float2 v20, float2 v30,
+	float2 v01, float2 v11, float2 v21, float2 v31,
+	float2 v02, float2 v12, float2 v22, float2 v32,
+	float2 v03, float2 v13, float2 v23, float2 v33) {
+	float2 r0 = lerp2_cubic_hermite(v00, v10, v20, v30, blend.x);
+	float2 r1 = lerp2_cubic_hermite(v01, v11, v21, v31, blend.x);
+	float2 r2 = lerp2_cubic_hermite(v02, v12, v22, v32, blend.x);
+	float2 r3 = lerp2_cubic_hermite(v03, v13, v23, v33, blend.x);
+	return lerp2_cubic_hermite(r0, r1, r2, r3, blend.y);
+}
+float3 lerp3_bicubic_hermite(float2 blend,
+	float3 v00, float3 v10, float3 v20, float3 v30,
+	float3 v01, float3 v11, float3 v21, float3 v31,
+	float3 v02, float3 v12, float3 v22, float3 v32,
+	float3 v03, float3 v13, float3 v23, float3 v33) {
+	float3 r0 = lerp3_cubic_hermite(v00, v10, v20, v30, blend.x);
+	float3 r1 = lerp3_cubic_hermite(v01, v11, v21, v31, blend.x);
+	float3 r2 = lerp3_cubic_hermite(v02, v12, v22, v32, blend.x);
+	float3 r3 = lerp3_cubic_hermite(v03, v13, v23, v33, blend.x);
+	return lerp3_cubic_hermite(r0, r1, r2, r3, blend.y);
+}
+float4 lerp4_bicubic_hermite(float2 blend,
+	float4 v00, float4 v10, float4 v20, float4 v30,
+	float4 v01, float4 v11, float4 v21, float4 v31,
+	float4 v02, float4 v12, float4 v22, float4 v32,
+	float4 v03, float4 v13, float4 v23, float4 v33) {
+	float4 r0 = lerp4_cubic_hermite(v00, v10, v20, v30, blend.x);
+	float4 r1 = lerp4_cubic_hermite(v01, v11, v21, v31, blend.x);
+	float4 r2 = lerp4_cubic_hermite(v02, v12, v22, v32, blend.x);
+	float4 r3 = lerp4_cubic_hermite(v03, v13, v23, v33, blend.x);
+	return lerp4_cubic_hermite(r0, r1, r2, r3, blend.y);
+}
