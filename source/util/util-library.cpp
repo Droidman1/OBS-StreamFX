@@ -25,7 +25,7 @@ streamfx::util::library::library(std::filesystem::path file) : _library(nullptr)
 {
 #if defined(ST_WINDOWS)
 	SetLastError(ERROR_SUCCESS);
-	auto wfile = ::streamfx::util::platform::utf8_to_native(file.u8string());
+	auto wfile = file.wstring();
 	if (file.is_absolute()) {
 		_library = reinterpret_cast<void*>(LoadLibraryExW(wfile.c_str(), nullptr, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR));
 	} else {
@@ -46,7 +46,7 @@ streamfx::util::library::library(std::filesystem::path file) : _library(nullptr)
 		throw std::runtime_error(ex);
 	}
 #elif defined(ST_UNIX)
-	_library = dlopen(file.u8string().c_str(), RTLD_LAZY);
+	_library = dlopen(file.generic_string().c_str(), RTLD_LAZY);
 	if (!_library) {
 		if (char* error = dlerror(); error)
 			throw std::runtime_error(error);
@@ -82,7 +82,7 @@ static std::unordered_map<std::string, std::weak_ptr<::streamfx::util::library>>
 
 std::shared_ptr<::streamfx::util::library> streamfx::util::library::load(std::filesystem::path file)
 {
-	auto kv = libraries.find(file.u8string());
+	auto kv = libraries.find(file.string());
 	if (kv != libraries.end()) {
 		if (auto ptr = kv->second.lock(); ptr)
 			return ptr;
@@ -90,23 +90,27 @@ std::shared_ptr<::streamfx::util::library> streamfx::util::library::load(std::fi
 	}
 
 	auto ptr = std::make_shared<::streamfx::util::library>(file);
-	libraries.emplace(file.u8string(), ptr);
+	libraries.emplace(file.string(), ptr);
 
 	return ptr;
 }
 
 std::shared_ptr<::streamfx::util::library> streamfx::util::library::load(std::string_view name)
 {
-	return load(std::filesystem::u8path(name));
+	return load(std::filesystem::path(name));
 }
 
 std::shared_ptr<::streamfx::util::library> streamfx::util::library::load(obs_module_t* instance)
 {
+	if (!instance) {
+		throw std::runtime_error("Can't load nullptr as a library.");
+	}
+
 	// Get an absolute path to the module.
-	auto path = std::filesystem::absolute(std::filesystem::u8path(obs_get_module_binary_path(instance)));
+	auto path = std::filesystem::absolute(std::filesystem::path(std::string(obs_get_module_binary_path(instance))));
 
 	// Find by absolute path.
-	auto kv = libraries.find(path.u8string());
+	auto kv = libraries.find(path.string());
 	if (kv != libraries.end()) {
 		if (auto ptr = kv->second.lock(); ptr) {
 			return ptr;
@@ -116,7 +120,7 @@ std::shared_ptr<::streamfx::util::library> streamfx::util::library::load(obs_mod
 
 	// If neither matches, add it to the registry.
 	std::shared_ptr<::streamfx::util::library> ptr{new ::streamfx::util::library(instance)};
-	libraries.emplace(path.u8string(), ptr);
+	libraries.emplace(path.string(), ptr);
 
 	return ptr;
 }

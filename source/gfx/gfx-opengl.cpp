@@ -8,17 +8,14 @@
 
 #include "warning-disable.hpp"
 #include <mutex>
-#include "warning-enable.hpp"
-
 // OpenGL
-#include "warning-disable.hpp"
-#include "glad/gl.h"
 #ifdef D_PLATFORM_WINDOWS
 #include "glad/wgl.h"
 #endif
 #ifdef D_PLATFORM_LINUX
 #include "glad/glx.h"
 #endif
+#include "glad/gl.h"
 #include "warning-enable.hpp"
 
 #ifdef _DEBUG
@@ -54,6 +51,7 @@ streamfx::gfx::opengl::opengl()
 	int version = gladLoaderLoadGL();
 #ifdef D_PLATFORM_WINDOWS
 	// ToDo: Figure out the HDC for which we need to load.
+
 	//gladLoaderLoadWGL();
 #endif
 #ifdef D_PLATFORM_LINUX
@@ -64,7 +62,6 @@ streamfx::gfx::opengl::opengl()
 
 streamfx::gfx::opengl::~opengl()
 {
-	gladLoaderUnloadGL();
 #ifdef D_PLATFORM_WINDOWS
 	// Does not appear to exist.
 	//gladLoaderUnloadWGL();

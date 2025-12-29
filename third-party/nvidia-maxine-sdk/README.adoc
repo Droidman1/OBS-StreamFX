@@ -1,0 +1,10 @@
+== NVIDIA Maxine SDK Headers
+This directory contains a merged copy of the NVIDIA Maxine SDKs, only including the files that are provided under MIT License
+
+=== NVIDIA Maxine
+NVIDIA Maxine™ is a collection of high-performance, easy-to-use, NVIDIA NIM™ microservices and SDKs for deploying AI features that enhance audio, video, and augmented reality (AR) effects for video conferencing and telepresence. With NVIDIA NIM, part of NVIDIA AI Enterprise, developers can access Maxine capabilities with easy-to-use microservices designed for secure, reliable, high-performance deployment across clouds, data centers, and workstations.
+
+Maxine includes state-of-the-art models to create high-quality effects that can be achieved with standard microphones and webcams. Maxine improves telepresence through clear communication and innovative features like Background Noise Reduction, Studio Voice, Video Relighting, Maxine Audio2Face-2D, Eye Contact, Maxine 3D, and more.
+
+=== License
+NVIDIA placed the necessary header files to link to them under MIT License, see NVOSSLicense.txt. However two files explicitly have a different header, and as such are currently "murky". 
